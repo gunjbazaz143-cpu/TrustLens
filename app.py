@@ -379,9 +379,7 @@ def create_app(config_class=Config):
         db.session.rollback()
         return render_template("500.html"), 500
 
-      # with app.app_context():
-    #     db.create_all()
-    #     seed_data()
+      
     return app
 
 
