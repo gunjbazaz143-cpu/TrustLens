@@ -23,3 +23,4 @@ reportlab>=4.0
 #   spacy               # advanced NLP; text scanner uses built-in heuristics otherwise
 #   sentence-transformers # semantic similarity; TF-IDF is used otherwise
 #   torch               # already a dependency of easyocr on CPU
+gunicorn
