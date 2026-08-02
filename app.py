@@ -333,7 +333,7 @@ def seed_data():
 def create_app(config_class=Config):
     app = Flask(__name__)
     if not os.path.exists(app.instance_path):
-    os.makedirs(app.instance_path)
+     os.makedirs(app.instance_path)
     app.config.from_object(config_class)
 
     db.init_app(app)
