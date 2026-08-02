@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Image scanner · {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-7">
+    <h1 class="fw-bold">Image / Screenshot scanner</h1>
+    <p class="text-muted-2">Upload a payment screenshot, receipt or any image. OCR reads embedded text and forensics check the pixels.</p>
+    <form method="post" action="{{ url_for('scanner_image') }}" enctype="multipart/form-data" class="glass-card p-4">
+      <div class="upload-zone" data-upload-zone="fileInput" data-preview="imgPreview">
+        <i class="bi bi-cloud-arrow-up fs-1 d-block mb-2 text-brand"></i>
+        <div class="fw-semibold">Click or drop an image here</div>
+        <div class="small text-muted-2">PNG, JPG, WEBP, GIF, BMP, TIFF · max 16 MB</div>
+      </div>
+      <input type="file" class="d-none" id="fileInput" name="file" accept="image/*">
+      <div id="imgPreview" class="text-center"></div>
+      <button type="submit" class="btn btn-brand mt-3 px-4"><i class="bi bi-search me-1"></i>Analyse image</button>
+    </form>
+  </div>
+  <div class="col-lg-5">
+    <div class="glass-card p-4">
+      <h5 class="fw-semibold">What is checked</h5>
+      <ul class="small text-muted-2 mb-0">
+        <li>OCR extraction with confidence scoring</li>
+        <li>Brightness, focus and compression artifacts</li>
+        <li>Editing software in metadata</li>
+        <li>Tampering via error-level analysis (ELA)</li>
+        <li>Duplicate detection with perceptual hashing</li>
+        <li>Embedded QR code decoding</li>
+      </ul>
+      <hr>
+      <h5 class="fw-semibold">Note</h5>
+      <p class="small text-muted-2 mb-0">OCR (EasyOCR) downloads a model on first use. If it is disabled or fails, the scanner says so and scores from image-level signals only.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

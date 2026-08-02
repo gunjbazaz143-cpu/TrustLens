@@ -1,0 +1,487 @@
+{% extends 'base.html' %}
+{% block title %}Scan #{{ data.id }} · {{ site_name }}{% endblock %}
+
+{% block content %}
+{% from '_macros.html' import score_badge, risk_badge, severity_icon %}
+
+<div class="row g-4">
+  <div class="col-lg-8">
+    {% if data.scan_type == 'Ingredients' and data.meta.get('caution_banner') %}
+    <div class="p-4 mb-4 rounded-3 border border-danger"
+         style="border-width:2px !important; background:rgba(220,53,69,.10)">
+      <div class="d-flex align-items-start gap-3">
+        <i class="bi bi-exclamation-triangle-fill fs-2 text-danger flex-shrink-0"></i>
+        <div>
+          <div class="fw-bold text-danger fs-6">{{ data.meta['caution_banner'] }}</div>
+          <div class="small mt-1">
+            Product category:
+            <strong>{{ data.meta.get('product_category') or 'Personal Care / Cosmetics' }}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% elif data.scan_type == 'Ingredients' and data.meta.get('edible_banner') %}
+    <div class="p-4 mb-4 rounded-3 border border-success"
+         style="border-width:2px !important; background:rgba(25,135,84,.10)">
+      <div class="d-flex align-items-start gap-3">
+        <i class="bi bi-check-circle-fill fs-2 text-success flex-shrink-0"></i>
+        <div>
+          <div class="fw-bold text-success fs-6">{{ data.meta['edible_banner'] }}</div>
+          <div class="small mt-1">
+            Product category:
+            <strong>{{ data.meta.get('product_category') or 'Edible Food / Beverage' }}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    {% if data.scan_type == 'QR' and data.meta.get('qr_type') == 'UPI' %}
+    <div class="glass-card p-4 mb-4">
+      <div class="d-flex flex-wrap justify-content-between align-items-start mb-3">
+        <h5 class="fw-semibold mb-0"><i class="bi bi-qr-code me-2 text-brand"></i>UPI Payment QR report</h5>
+        {% if data.meta.get('upi_verdict') == 'Valid UPI QR' %}
+          <span class="badge text-bg-success fs-6">Valid UPI QR</span>
+        {% else %}
+          <span class="badge text-bg-danger fs-6">Suspicious UPI QR</span>
+        {% endif %}
+      </div>
+      <dl class="row mb-0">
+        <dt class="col-4 text-muted-2 small">QR type</dt>
+        <dd class="col-8 small mb-2"><span class="badge text-bg-brand border">UPI Payment (upi://pay)</span></dd>
+        <dt class="col-4 text-muted-2 small">UPI ID</dt>
+        <dd class="col-8 small mb-2"><code class="text-break">{{ data.meta.get('upi_pa') or '—' }}</code></dd>
+        <dt class="col-4 text-muted-2 small">Account / Payee name</dt>
+        <dd class="col-8 small mb-2">{{ data.meta.get('upi_pn') or '—' }}</dd>
+        <dt class="col-4 text-muted-2 small">Amount</dt>
+        <dd class="col-8 small mb-2">{{ data.meta.get('upi_am') or 'Not fixed (payer decides)' }} {{ data.meta.get('upi_cu') or 'INR' }}</dd>
+        <dt class="col-4 text-muted-2 small">Currency</dt>
+        <dd class="col-8 small mb-2">{{ data.meta.get('upi_cu') or 'INR' }}</dd>
+        <dt class="col-4 text-muted-2 small">Validation status</dt>
+        <dd class="col-8 small mb-2">
+          {% if data.meta.get('upi_validation') == 'valid' %}
+            <span class="badge text-bg-success">UPI ID format valid</span>
+          {% else %}
+            <span class="badge text-bg-danger">UPI ID missing or invalid</span>
+          {% endif %}
+        </dd>
+        {% if data.meta.get('upi_tn') %}
+        <dt class="col-4 text-muted-2 small">Transaction note</dt>
+        <dd class="col-8 small mb-2">{{ data.meta.get('upi_tn') }}</dd>
+        {% endif %}
+        {% if data.meta.get('upi_tr') %}
+        <dt class="col-4 text-muted-2 small">Transaction reference</dt>
+        <dd class="col-8 small mb-2"><code>{{ data.meta.get('upi_tr') }}</code></dd>
+        {% endif %}
+      </dl>
+    </div>
+    {% endif %}
+
+    {% if data.scan_type == 'QR' and data.meta.get('qr_type') == 'URL' %}
+    <div class="glass-card p-4 mb-4">
+      <div class="d-flex flex-wrap justify-content-between align-items-start mb-3">
+        <h5 class="fw-semibold mb-0"><i class="bi bi-link-45deg me-2 text-brand"></i>URL QR report</h5>
+        <span class="badge text-bg-brand border fs-6">Web destination</span>
+      </div>
+      <dl class="row mb-0">
+        <dt class="col-4 text-muted-2 small">Destination URL</dt>
+        <dd class="col-8 small mb-2"><code class="text-break">{{ data.meta.get('url') or '—' }}</code></dd>
+        <dt class="col-4 text-muted-2 small">Domain</dt>
+        <dd class="col-8 small mb-2">{{ data.meta.get('domain') or '—' }}</dd>
+        {% if data.meta.get('ssl_status') %}
+        <dt class="col-4 text-muted-2 small">HTTPS / TLS certificate</dt>
+        <dd class="col-8 small mb-2">{{ data.meta.get('ssl_status') }}</dd>
+        {% endif %}
+        {% if data.meta.get('domain_age_days') is not none %}
+        <dt class="col-4 text-muted-2 small">Domain age</dt>
+        <dd class="col-8 small mb-2">{{ data.meta.get('domain_age_days') }} days</dd>
+        {% endif %}
+      </dl>
+    </div>
+    {% endif %}
+
+    {% if data.scan_type == 'News' and data.meta.get('verdict') %}
+    {% set v = data.meta['verdict'] %}
+    {% set vcls = {'verified':'success','partially_verified':'warning','contradicted':'danger','insufficient':'secondary'}[v] %}
+    {% set vicon = {'verified':'bi-shield-check','partially_verified':'bi-shield-exclamation','contradicted':'bi-shield-x','insufficient':'bi-hourglass-split'}[v] %}
+    {% set supporting = data.meta.get('sources')|selectattr('support','equalto','support')|list %}
+    {% set contradicting = data.meta.get('sources')|selectattr('support','equalto','contradict')|list %}
+    {% set related_sources = data.meta.get('sources')|selectattr('support','equalto','related')|list %}
+    <div class="glass-card p-4 mb-4">
+      <div class="d-flex flex-wrap justify-content-between align-items-start mb-3">
+        <h5 class="fw-semibold mb-0"><i class="bi bi-newspaper me-2 text-brand"></i>News verification report</h5>
+        <span class="badge text-bg-{{ vcls }} fs-6">{{ data.meta['verdict_label'] }}</span>
+      </div>
+
+      {% if data.meta.get('offline') %}
+      <div class="alert alert-warning border-0 py-3 mb-4">
+        <div class="fw-semibold small mb-1"><i class="bi bi-wifi-off me-1"></i>Live internet search unavailable</div>
+        <div class="small">{{ data.meta.get('network_note') or 'Live internet search was disabled or unreachable for this scan.' }}</div>
+      </div>
+      {% endif %}
+
+      {% if data.meta.get('explanation') %}
+      <div class="p-3 rounded-3 border-start border-4 border-{{ vcls }} mb-4" style="background:var(--glass-bg)">
+        <div class="small-label fw-semibold text-muted-2 mb-1"><i class="bi {{ vicon }} me-1 text-{{ vcls }}"></i>Why this verdict</div>
+        <div class="small">{{ data.meta['explanation'] }}</div>
+      </div>
+      {% endif %}
+
+      <div class="row g-3 mb-4">
+        <div class="col-md-4">
+          <div class="p-3 rounded-3 border h-100" style="background:var(--glass-bg)">
+            <div class="small text-muted-2 fw-semibold">Verdict</div>
+            <div class="fw-bold text-{{ vcls }} mt-1"><i class="bi {{ vicon }} me-1"></i>{{ data.meta['verdict_label'] }}</div>
+            <div class="small text-muted-2 mt-1">{{ data.summary }}</div>
+          </div>
+        </div>
+        <div class="col-md-8">
+          <div class="p-3 rounded-3 border h-100" style="background:var(--glass-bg)">
+            <div class="d-flex justify-content-between small mb-1">
+              <span class="text-muted-2 fw-semibold">Confidence in this verdict</span>
+              {% if data.meta.get('confidence') is not none %}
+              <strong>{{ data.meta['confidence'] }}/100</strong>
+              {% else %}<span class="text-muted-2">no evidence</span>{% endif %}
+            </div>
+            <div class="progress" style="height:14px;background:var(--glass-bg)">
+              <div class="progress-bar progress-bar-striped bg-{{ vcls }}" role="progressbar"
+                   style="width: {{ data.meta.get('confidence') or 0 }}%"></div>
+            </div>
+            <div class="small text-muted-2 mt-2">
+              Based on {{ data.meta.get('supporting_count') or 0 }} supporting, {{ data.meta.get('contradicting_count') or 0 }} contradicting and {{ data.meta.get('related_count') or 0 }} related trusted report(s).
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {% if data.meta.get('main_claim') %}
+      <div class="p-3 rounded-3 border mb-4" style="background:var(--glass-bg)">
+        <div class="small-label fw-semibold text-muted-2 mb-1"><i class="bi bi-quote me-1"></i>Main claim extracted</div>
+        <div class="small">{{ data.meta['main_claim'] }}</div>
+      </div>
+      {% endif %}
+
+      {% if data.meta.get('entities') %}
+      {% set ent = data.meta['entities'] %}
+      <div class="mb-4">
+        <div class="small-label fw-semibold text-muted-2 mb-2"><i class="bi bi-person-lines-fill me-1"></i>Entities detected</div>
+        <div class="d-flex flex-wrap gap-2">
+          {% for p in ent.get('persons') or [] %}
+            <span class="badge rounded-pill text-bg-light border"><i class="bi bi-person me-1 text-brand"></i>{{ p }}</span>
+          {% endfor %}
+          {% for l in ent.get('locations') or [] %}
+            <span class="badge rounded-pill text-bg-light border"><i class="bi bi-geo-alt me-1 text-primary"></i>{{ l }}</span>
+          {% endfor %}
+          {% for o in ent.get('orgs') or [] %}
+            <span class="badge rounded-pill text-bg-light border"><i class="bi bi-bank me-1 text-warning"></i>{{ o }}</span>
+          {% endfor %}
+          {% for d in ent.get('dates') or [] %}
+            <span class="badge rounded-pill text-bg-light border"><i class="bi bi-calendar3 me-1 text-danger"></i>{{ d }}</span>
+          {% endfor %}
+        </div>
+        {% if not (ent.get('persons') or ent.get('locations') or ent.get('orgs') or ent.get('dates')) %}
+        <div class="small text-muted-2">No notable entities detected.</div>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      {% if data.meta.get('search_queries') %}
+      <div class="mb-4">
+        <div class="small-label fw-semibold text-muted-2 mb-2"><i class="bi bi-search me-1"></i>Search queries used</div>
+        <div class="d-flex flex-wrap gap-2">
+          {% for q in data.meta['search_queries'] %}
+            <span class="badge text-bg-dark border small py-2 px-3">{{ q }}</span>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      {% if data.meta.get('publication_date') or data.meta.get('source_domain') %}
+      <p class="small text-muted-2 mb-3">
+        {% if data.meta.get('publication_date') %}Publication date: <strong>{{ data.meta['publication_date'] }}</strong>{% endif %}
+        {% if data.meta.get('source_domain') %} · source domain: <code>{{ data.meta['source_domain'] }}</code>{% endif %}
+      </p>
+      {% endif %}
+
+      {% if supporting %}
+      <h6 class="fw-semibold text-success mb-2"><i class="bi bi-check-circle-fill me-1"></i>Supporting evidence ({{ supporting|length }})</h6>
+      <div class="d-flex flex-column gap-2 mb-4">
+        {% for s in supporting %}
+        <div class="evidence-item sev-success p-3" style="background:var(--glass-bg)">
+          <div class="d-flex justify-content-between align-items-start gap-2">
+            <div>
+              <div class="fw-semibold small">{{ s.source or s.title }}</div>
+              <div class="small text-muted-2">{{ s.title }}</div>
+              <div class="small text-muted-2 mt-1">
+                <i class="bi bi-arrow-left-right me-1"></i>{{ s.similarity }}% similar
+                {% if s.entity_overlap is not none %} · <i class="bi bi-intersect me-1"></i>{{ s.entity_overlap }}% entity overlap{% endif %}
+                {% if s.published %}<i class="bi bi-calendar3 ms-2 me-1"></i>{{ s.published }}{% endif %}
+                {% if s.date_consistent is sameas true %}<span class="badge text-bg-success-subtle ms-2">date matches</span>
+                {% elif s.date_consistent is sameas false %}<span class="badge text-bg-danger-subtle ms-2">date mismatch</span>{% endif %}
+              </div>
+              {% if s.snippet %}<div class="small text-muted-2 mt-1">{{ s.snippet }}</div>{% endif %}
+            </div>
+            {% if s.link %}<a class="btn btn-sm btn-outline-success flex-shrink-0" href="{{ s.link }}" target="_blank" rel="noopener">Read source</a>{% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% if contradicting %}
+      <h6 class="fw-semibold text-danger mb-2"><i class="bi bi-x-octagon-fill me-1"></i>Contradicting evidence ({{ contradicting|length }})</h6>
+      <div class="d-flex flex-column gap-2 mb-4">
+        {% for s in contradicting %}
+        <div class="evidence-item sev-danger p-3" style="background:var(--glass-bg)">
+          <div class="d-flex justify-content-between align-items-start gap-2">
+            <div>
+              <div class="fw-semibold small">{{ s.source or s.title }}</div>
+              <div class="small text-muted-2">{{ s.title }}</div>
+              <div class="small text-muted-2 mt-1">
+                <i class="bi bi-arrow-left-right me-1"></i>{{ s.similarity }}% similar
+                {% if s.entity_overlap is not none %} · <i class="bi bi-intersect me-1"></i>{{ s.entity_overlap }}% entity overlap{% endif %}
+                {% if s.published %}<i class="bi bi-calendar3 ms-2 me-1"></i>{{ s.published }}{% endif %}
+              </div>
+              {% if s.snippet %}<div class="small text-muted-2 mt-1">{{ s.snippet }}</div>{% endif %}
+            </div>
+            {% if s.link %}<a class="btn btn-sm btn-outline-danger flex-shrink-0" href="{{ s.link }}" target="_blank" rel="noopener">Read source</a>{% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% if related_sources %}
+      <div class="mb-4">
+        <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#relatedNews" aria-expanded="false" aria-controls="relatedNews">
+          <i class="bi bi-arrows-expand me-1"></i>Related reports ({{ related_sources|length }}) - expand
+        </button>
+        <div class="collapse mt-2" id="relatedNews">
+          <div class="d-flex flex-column gap-2">
+            {% for s in related_sources %}
+            <div class="evidence-item sev-info p-3" style="background:var(--glass-bg)">
+              <div class="d-flex justify-content-between align-items-start gap-2">
+                <div>
+                  <div class="fw-semibold small">{{ s.source or s.title }}</div>
+                  <div class="small text-muted-2">{{ s.title }}</div>
+                  <div class="small text-muted-2 mt-1">
+                    <i class="bi bi-arrow-left-right me-1"></i>{{ s.similarity }}% similar
+                    {% if s.published %}<i class="bi bi-calendar3 ms-2 me-1"></i>{{ s.published }}{% endif %}
+                  </div>
+                  {% if s.snippet %}<div class="small text-muted-2 mt-1">{{ s.snippet }}</div>{% endif %}
+                </div>
+                {% if s.link %}<a class="btn btn-sm btn-outline-secondary flex-shrink-0" href="{{ s.link }}" target="_blank" rel="noopener">Read source</a>{% endif %}
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      {% if data.meta.get('sources') %}
+      <h6 class="fw-semibold mb-3"><i class="bi bi-diagram-3 me-1 text-brand"></i>Evidence timeline</h6>
+      <div class="position-relative ps-4 mb-4" style="border-left:2px solid var(--glass-bg)">
+        {% for s in data.meta['sources']|sort(attribute='published') %}
+        <div class="position-relative mb-3">
+          <div class="position-absolute top-0 start-0 translate-middle-x rounded-circle border"
+               style="width:12px;height:12px;left:-24px;
+               {% if s.support == 'support' %}background:#198754;border-color:#198754
+               {% elif s.support == 'contradict' %}background:#dc3545;border-color:#dc3545
+               {% else %}background:#6c757d;border-color:#6c757d{% endif %}"></div>
+          <div class="small">
+            <div class="d-flex flex-wrap align-items-center gap-2">
+              <span class="badge text-bg-light border">{{ s.published or 'date unknown' }}</span>
+              <strong>{{ s.source or 'Source' }}</strong>
+              {% if s.support == 'support' %}<span class="text-success"><i class="bi bi-check-circle-fill me-1"></i>supports</span>
+              {% elif s.support == 'contradict' %}<span class="text-danger"><i class="bi bi-x-circle-fill me-1"></i>contradicts</span>
+              {% else %}<span class="text-muted-2"><i class="bi bi-dash-circle me-1"></i>related</span>{% endif %}
+              {% if s.similarity is not none %}<span class="text-muted-2">· {{ s.similarity }}% similar</span>{% endif %}
+              {% if s.link %}· <a href="{{ s.link }}" target="_blank" rel="noopener">open</a>{% endif %}
+            </div>
+            <div class="text-muted-2">{{ s.title }}</div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% if data.meta.get('ai_explanation') %}
+      <div class="p-3 rounded-3 border mb-4" style="background:var(--glass-bg)">
+        <div class="small-label fw-semibold text-muted-2 mb-1"><i class="bi bi-cpu me-1"></i>AI explanation <span class="badge text-bg-secondary ms-1">informational only</span></div>
+        <div class="small">{{ data.meta['ai_explanation'] }}</div>
+      </div>
+      {% endif %}
+
+      {% if recent_news is defined and recent_news %}
+      <div class="mb-2">
+        <h6 class="fw-semibold mb-2"><i class="bi bi-clock-history me-1 text-brand"></i>Recent news verifications</h6>
+        <div class="d-flex flex-column gap-2">
+          {% for rn in recent_news %}
+          <a class="text-decoration-none" href="{{ url_for('view_result', scan_id=rn.id) }}">
+            <div class="d-flex justify-content-between align-items-center gap-2 p-2 rounded-3 border" style="background:var(--glass-bg)">
+              <div class="small">
+                <span class="badge text-bg-{{ {'verified':'success','partially_verified':'warning','contradicted':'danger','insufficient':'secondary'}[rn.verdict] }} me-2">{{ rn.verdict_label }}</span>
+                <span class="text-muted-2">{{ rn.summary }}</span>
+              </div>
+              <span class="small text-muted-2 flex-shrink-0">{{ rn.created_at.strftime('%d %b %Y') }}</span>
+            </div>
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="glass-card p-4">
+      <div class="d-flex flex-wrap justify-content-between align-items-start mb-3">
+        <div>
+          <span class="badge text-bg-light border">{{ data.scan_type }}</span>
+          <h3 class="fw-bold mt-2 mb-1">Scan #{{ data.id }}</h3>
+          <div class="small text-muted-2">
+            {{ data.created_at.strftime('%d %B %Y, %H:%M UTC') }} ·
+            input: <em>{{ data.input_summary[:90] or '—' }}</em>
+          </div>
+        </div>
+        <div class="text-end">
+          {% if data.trust_score is none %}
+            <div class="gauge text-secondary">{{ '—' }}</div>
+            <span class="badge text-bg-secondary fs-6"><i class="bi bi-hourglass-split me-1"></i>Insufficient Evidence</span>
+          {% elif data.trust_score >= 80 %}
+            <div class="gauge text-success">{{ data.trust_score }}</div>
+            <span class="badge text-bg-success fs-6"><i class="bi bi-shield-check me-1"></i>Trustworthy</span>
+          {% elif data.trust_score >= 50 %}
+            <div class="gauge text-warning">{{ data.trust_score }}</div>
+            <span class="badge text-bg-warning fs-6"><i class="bi bi-shield-exclamation me-1"></i>Exercise caution</span>
+          {% else %}
+            <div class="gauge text-danger">{{ data.trust_score }}</div>
+            <span class="badge text-bg-danger fs-6"><i class="bi bi-shield-x me-1"></i>High risk</span>
+          {% endif %}
+          <div class="mt-1">{{ risk_badge(data.risk_level) }}</div>
+        </div>
+      </div>
+
+      <hr>
+      <h5 class="fw-semibold"><i class="bi bi-card-text me-2 text-brand"></i>Summary</h5>
+      <p class="mb-0">{{ data.summary }}</p>
+    </div>
+
+    {% if data.scan_type == 'Ingredients' and (data.meta.get('risky_ingredients') is not none or data.meta.get('safe_ingredients') is not none) %}
+    <div class="glass-card p-4 mt-4">
+      <h5 class="fw-semibold mb-3"><i class="bi bi-clipboard-check me-2 text-brand"></i>Ingredient breakdown</h5>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <i class="bi bi-shield-x text-danger"></i>
+            <h6 class="fw-semibold mb-0 text-danger">Unsafe / risky ingredients</h6>
+          </div>
+          {% set risky = data.meta.get('risky_ingredients') or [] %}
+          {% if risky %}
+            <div class="d-flex flex-column gap-2">
+              {% for it in risky %}
+                <div class="border-start border-danger border-3 ps-3 py-1">
+                  <div class="small fw-semibold">{{ it.name }}</div>
+                  <div class="small text-muted-2">{{ it.why }}</div>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <p class="small text-muted-2 mb-0">No risky ingredients detected.</p>
+          {% endif %}
+        </div>
+        <div class="col-md-6">
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <i class="bi bi-shield-check text-success"></i>
+            <h6 class="fw-semibold mb-0 text-success">Safe / GRAS ingredients</h6>
+          </div>
+          {% set safe = data.meta.get('safe_ingredients') or [] %}
+          {% if safe %}
+            <div class="d-flex flex-wrap gap-1">
+              {% for name in safe %}
+                <span class="badge text-bg-light border small">{{ name }}</span>
+              {% endfor %}
+            </div>
+          {% else %}
+            <p class="small text-muted-2 mb-0">No safe ingredients identified.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="glass-card p-4 mt-4">
+      <h5 class="fw-semibold mb-3"><i class="bi bi-list-check me-2 text-brand"></i>Evidence behind this result</h5>
+      <div class="d-flex flex-column gap-2">
+        {% for r in data.reasons %}
+          <div class="evidence-item sev-{{ r.severity }} p-3" style="background:var(--glass-bg)">
+            <div class="d-flex justify-content-between align-items-start gap-2">
+              <div>
+                <div class="fw-semibold small-label mb-1">{{ severity_icon(r.severity) }} {{ r.title }}</div>
+                <div class="small">{{ r.text }}</div>
+              </div>
+              {% if r.impact %}
+                <span class="badge text-bg-secondary flex-shrink-0">{{ r.impact }}</span>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    {% if data.suggestions %}
+      <div class="glass-card p-4 mt-4">
+        <h5 class="fw-semibold mb-3"><i class="bi bi-lightbulb me-2 text-brand"></i>Suggestions</h5>
+        <ul class="mb-0">
+          {% for s in data.suggestions %}
+            <li class="small mb-1">{{ s }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    {% if data.meta %}
+      <div class="glass-card p-4 mt-4">
+        <h5 class="fw-semibold mb-3"><i class="bi bi-sliders me-2 text-brand"></i>Technical details</h5>
+        <dl class="row mb-0">
+          {% for k, v in data.meta.items() %}
+            {% if v and k in ['url', 'domain', 'format', 'size', 'ocr_confidence', 'payload', 'confidence', 'type', 'length', 'words', 'ingredient_count'] %}
+              <dt class="col-4 text-muted-2 small">{{ k | replace('_', ' ') }}</dt>
+              <dd class="col-8 small mb-1"><code class="text-break">{{ v }}</code></dd>
+            {% endif %}
+          {% endfor %}
+        </dl>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="col-lg-4">
+    <div class="glass-card p-4 mb-4">
+      <h5 class="fw-semibold mb-3"><i class="bi bi-grid me-2 text-brand"></i>Actions</h5>
+      {% if owner %}
+        <form method="post" action="{{ url_for('generate_report', scan_id=data.id) }}" class="mb-2">
+          <button type="submit" class="btn btn-brand w-100"><i class="bi bi-file-earmark-pdf me-1"></i>Download PDF report</button>
+        </form>
+        <form method="post" action="{{ url_for('delete_scan', scan_id=data.id) }}"
+              onsubmit="return confirm('Delete this scan from history?')">
+          <button type="submit" class="btn btn-outline-danger w-100"><i class="bi bi-trash me-1"></i>Delete from history</button>
+        </form>
+      {% elif data.user_id %}
+        <p class="small text-muted-2 mb-0">Sign in to the owning account to generate PDF reports and manage this scan.</p>
+      {% else %}
+        <p class="small text-muted-2 mb-0">Create an account and scan again to save results and generate PDF reports.</p>
+      {% endif %}
+    </div>
+
+    <div class="glass-card p-4">
+      <h5 class="fw-semibold mb-3"><i class="bi bi-arrow-repeat me-2 text-brand"></i>Verify something else</h5>
+      <div class="d-flex flex-column gap-2">
+        {% set others = [('scanner_text','Text'), ('scanner_image','Image'), ('scanner_website','Website'), ('scanner_news','News'), ('scanner_job','Job'), ('scanner_claim','Claim'), ('scanner_ingredient','Ingredients'), ('scanner_qr','QR')] %}
+        {% for endpoint, label in others %}
+          <a class="btn btn-sm btn-outline-secondary text-start" href="{{ url_for(endpoint) }}"><i class="bi bi-chevron-right me-1"></i>{{ label }}</a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

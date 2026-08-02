@@ -1,0 +1,47 @@
+{# TrustLens shared macros #}
+
+{% macro score_badge(score) -%}
+  {%- if score is none -%}
+    <span class="badge rounded-pill text-bg-secondary"><i class="bi bi-hourglass-split"></i> Insufficient Evidence</span>
+  {%- elif score >= 80 -%}
+    <span class="badge rounded-pill text-bg-success"><i class="bi bi-shield-check"></i> {{ score }}/100</span>
+  {%- elif score >= 50 -%}
+    <span class="badge rounded-pill text-bg-warning text-dark"><i class="bi bi-shield-exclamation"></i> {{ score }}/100</span>
+  {%- else -%}
+    <span class="badge rounded-pill text-bg-danger"><i class="bi bi-shield-x"></i> {{ score }}/100</span>
+  {%- endif -%}
+{%- endmacro %}
+
+{% macro risk_badge(risk) -%}
+  {%- set r = (risk or 'unknown').lower() -%}
+  {%- if r == 'low' -%}
+    <span class="badge text-bg-success">Low risk</span>
+  {%- elif r == 'medium' -%}
+    <span class="badge text-bg-warning text-dark">Medium risk</span>
+  {%- elif r == 'high' -%}
+    <span class="badge text-bg-danger">High risk</span>
+  {%- else -%}
+    <span class="badge text-bg-secondary">Unknown</span>
+  {%- endif -%}
+{%- endmacro %}
+
+{% macro severity_icon(sev) -%}
+  {%- if sev == 'danger' -%}
+    <i class="bi bi-exclamation-octagon-fill text-danger"></i>
+  {%- elif sev == 'warning' -%}
+    <i class="bi bi-exclamation-triangle-fill text-warning"></i>
+  {%- elif sev == 'success' -%}
+    <i class="bi bi-check-circle-fill text-success"></i>
+  {%- else -%}
+    <i class="bi bi-info-circle-fill text-info"></i>
+  {%- endif -%}
+{%- endmacro %}
+
+{% macro flash_alert(category, message) -%}
+  {%- set cls = {'error':'danger','warning':'warning','success':'success','info':'info'}.get(category, 'info') -%}
+  <div class="alert alert-{{ cls }} alert-dismissible fade show shadow-sm" role="alert">
+    <i class="bi {% if cls=='danger' %}bi-x-octagon-fill{% elif cls=='warning' %}bi-exclamation-triangle-fill{% elif cls=='success' %}bi-check-circle-fill{% else %}bi-info-circle-fill{% endif %} me-1"></i>
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+{%- endmacro %}

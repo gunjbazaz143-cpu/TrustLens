@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Reports · {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+  <h1 class="fw-bold mb-0"><i class="bi bi-file-earmark-pdf me-2 text-warning"></i>Reports</h1>
+  <a href="{{ url_for('admin_export_reports') }}" class="btn btn-brand btn-sm"><i class="bi bi-filetype-csv me-1"></i>Export CSV</a>
+</div>
+{% include 'admin/_admin_nav.html' %}
+
+<div class="glass-card p-0 overflow-hidden">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead><tr><th>#</th><th>Filename</th><th>User</th><th>Scan</th><th>Created</th><th class="text-end">Actions</th></tr></thead>
+      <tbody>
+        {% for r in reports %}
+          <tr>
+            <td class="text-muted-2">{{ r.id }}</td>
+            <td class="small"><i class="bi bi-file-earmark-pdf text-danger me-1"></i>{{ r.filename }}</td>
+            <td class="small">{{ r.user.email if r.user else 'guest' }}</td>
+            <td class="small">{{ '#%d' % r.scan_id if r.scan_id else '-' }}</td>
+            <td class="small text-muted-2">{{ r.created_at.strftime('%d %b %Y, %H:%M') }}</td>
+            <td class="text-end">
+              <form method="post" action="{{ url_for('admin_delete_report', report_id=r.id) }}" class="d-inline"
+                    onsubmit="return confirm('Delete report {{ r.filename }}?')">
+                <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash me-1"></i>Delete</button>
+              </form>
+            </td>
+          </tr>
+        {% else %}
+          <tr><td colspan="6" class="text-center py-4 text-muted-2">No reports generated.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Scanners · {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="text-center my-4">
+  <h1 class="fw-bold mb-1">Verification scanners</h1>
+  <p class="text-muted-2">Choose what you want to verify. No account needed.</p>
+</div>
+{% include '_scanner_cards.html' %}
+{% endblock %}

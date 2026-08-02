@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Terms · {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <h1 class="fw-bold mb-3">Terms of use</h1>
+    <div class="glass-card p-4">
+      <h5 class="fw-semibold">1. Service</h5>
+      <p>{{ site_name }} provides heuristic, evidence-based verification of content you submit. Results are automated and provided "as is".</p>
+
+      <h5 class="fw-semibold mt-4">2. Not financial or legal advice</h5>
+      <p>Trust scores, risk levels and reports are screening aids, not guarantees, and do not constitute legal, financial, medical or investment advice. Always confirm through official channels.</p>
+
+      <h5 class="fw-semibold mt-4">3. Acceptable use</h5>
+      <p>You agree not to use the service to probe systems you do not own, to test stolen credentials, to harass, or to violate any law. You are responsible for the content you submit and that it does not infringe others' rights.</p>
+
+      <h5 class="fw-semibold mt-4">4. Accounts</h5>
+      <p>You are responsible for keeping your password secret. Accounts may be suspended for misuse. The seeded admin account must have its password changed immediately.</p>
+
+      <h5 class="fw-semibold mt-4">5. Intellectual property</h5>
+      <p>Our code, design and analysis methodology belong to the project. Your scans and reports are yours.</p>
+
+      <h5 class="fw-semibold mt-4">6. Availability</h5>
+      <p>The service is provided without warranty. We may limit, suspend or discontinue features at any time. Network-dependent scanners may be unavailable during outages.</p>
+
+      <h5 class="fw-semibold mt-4">7. Liability</h5>
+      <p>To the maximum extent permitted by law, {{ site_name }} is not liable for damages arising from reliance on scan results, unavailable features, or third-party services contacted during analysis.</p>
+
+      <h5 class="fw-semibold mt-4">8. Changes</h5>
+      <p>We may update these terms. Continued use after changes means acceptance.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

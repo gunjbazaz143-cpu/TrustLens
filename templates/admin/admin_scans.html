@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}All scans · {{ site_name }}{% endblock %}
+
+{% block content %}
+{% from '_macros.html' import score_badge %}
+<h1 class="fw-bold mb-4"><i class="bi bi-search me-2 text-warning"></i>All scans</h1>
+{% include 'admin/_admin_nav.html' %}
+
+<div class="glass-card p-0 overflow-hidden">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead><tr><th>#</th><th>Type</th><th>Input</th><th>Score</th><th>Risk</th><th>Status</th><th>User</th><th>Date</th><th class="text-end">Actions</th></tr></thead>
+      <tbody>
+        {% for s in scans %}
+          <tr>
+            <td class="text-muted-2">#{{ s.id }}</td>
+            <td><span class="badge text-bg-light border">{{ s.scan_type }}</span></td>
+            <td class="small">{{ s.input_summary[:50] or '-' }}</td>
+            <td>{{ score_badge(s.trust_score) }}</td>
+            <td class="small">{{ s.risk_level or '-' }}</td>
+            <td><span class="badge text-bg-secondary">{{ s.status }}</span></td>
+            <td class="small">{{ s.user.email if s.user else 'guest' }}</td>
+            <td class="small text-muted-2">{{ s.created_at.strftime('%d %b %H:%M') }}</td>
+            <td class="text-end">
+              <a href="{{ url_for('view_result', scan_id=s.id) }}" class="btn btn-sm btn-outline-brand"><i class="bi bi-eye"></i></a>
+              <form method="post" action="{{ url_for('admin_delete_scan', scan_id=s.id) }}" class="d-inline"
+                    onsubmit="return confirm('Delete scan #{{ s.id }}?')">
+                <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+              </form>
+            </td>
+          </tr>
+        {% else %}
+          <tr><td colspan="9" class="text-center py-4 text-muted-2">No scans recorded.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

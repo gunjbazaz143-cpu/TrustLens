@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}FAQ · {{ site_name }}{% endblock %}
+
+{% block content %}
+<h1 class="fw-bold mb-1">Frequently asked questions</h1>
+<p class="text-muted-2 mb-4">Straight answers about how scoring works.</p>
+
+<div class="accordion" id="faqAcc">
+  {% set faqs = [
+    ('Why do some scans say "Insufficient Evidence"?',
+     'We never invent a score. If a scan does not produce enough reliable signals - a very short message, failed OCR, an unreachable website, or a claim that matches nothing in the evidence base - we return "Insufficient Evidence" instead of a made-up number.'),
+    ('What does the trust score actually measure?',
+     'The score starts at 100 and points are deducted only when a real risk signal is detected, for example: urgency/prize language (-15), suspicious links (-25), payment-to-reward patterns (-30), blurry or tampered images, new domains, fee requests in job postings, and more. Each deduction is shown on the result page.'),
+    ('Is a high score proof that something is safe?',
+     'No. It means no risk signals were detected in what you submitted. Scammers constantly change tactics, so always verify through official channels before sharing money or personal data.'),
+    ('Does the image scanner work without OCR?',
+     'OCR (EasyOCR) is used when enabled. If OCR is disabled or fails, the scanner still checks metadata, brightness, blur, compression, tampering and QR codes - and clearly states that on-screen text extraction was unavailable.'),
+    ('Do you store my uploads?',
+     'Files are stored on the server under uploads/ with random names so the original filename is never exposed, and they are linked to your account history so you can review scans and generate reports.'),
+    ('How is the news scanner cross-checking done?',
+     'The article headline or text is compared for similarity against headlines fetched live from trusted RSS feeds (BBC, Reuters). If no close match is found, the score drops and the result page says so.'),
+    ('What if I am not sure a job offer is real?',
+     'Run it through the Job scanner. Legitimate employers never charge candidates. If a posting asks for a registration, processing or training fee, treat it as a scam and report it on the Report a Scam page.'),
+    ('Can I use the tool without an account?',
+     'Yes. Anyone can run any scanner anonymously. Creating an account adds scan history, saved reports and PDF generation.'),
+    ('How do I generate a PDF report?',
+     'Sign in, run a scan, open the result, and click "Download PDF report". The report is saved under Reports in your account.'),
+    ('Who is the default admin and how do I change the password?',
+     'The seeded admin account is admin@trustlens.app with the password shown in the README. Sign in, open your profile and change it immediately.')
+  ] %}
+  {% for q, a in faqs %}
+    <div class="accordion-item glass-card mb-3 border-0">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq{{ loop.index }}" aria-expanded="false" aria-controls="faq{{ loop.index }}">
+          {{ q }}
+        </button>
+      </h2>
+      <div id="faq{{ loop.index }}" class="accordion-collapse collapse" data-bs-parent="#faqAcc">
+        <div class="accordion-body">{{ a }}</div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Claim checker · {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-7">
+    <h1 class="fw-bold">Claim checker</h1>
+    <p class="text-muted-2">State a claim as a full sentence and we will compare it against a knowledge base of verified facts.</p>
+    <form method="post" action="{{ url_for('scanner_claim') }}" class="glass-card p-4">
+      <label class="form-label small-label">The claim</label>
+      <textarea class="form-control mb-3" name="claim" rows="5" required placeholder='e.g. "Vaccines do not cause autism."' minlength="8"></textarea>
+      <button type="submit" class="btn btn-brand px-4"><i class="bi bi-search me-1"></i>Check claim</button>
+    </form>
+  </div>
+  <div class="col-lg-5">
+    <div class="glass-card p-4">
+      <h5 class="fw-semibold">How it works</h5>
+      <ul class="small text-muted-2 mb-0">
+        <li>Your claim is compared against seeded evidence entries</li>
+        <li>A minimum similarity threshold must be met</li>
+        <li>Matched claims return "Likely True" or "Likely False" with the evidence shown</li>
+        <li>No match means <strong>Insufficient Evidence</strong> - never a guess</li>
+      </ul>
+      <hr>
+      <h5 class="fw-semibold">Tip</h5>
+      <p class="small text-muted-2 mb-0">Phrase the claim the same way a fact-checker would. Short fragments rarely reach the threshold.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

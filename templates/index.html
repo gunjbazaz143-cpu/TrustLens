@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% block title %}Home · {{ site_name }}{% endblock %}
+
+{% block content %}
+
+<section class="hero">
+  <span class="badge rounded-pill text-bg-secondary mb-3">
+    <i class="bi bi-stars me-1"></i>Evidence-based verification - never a made-up score
+  </span>
+  <h1>Verify before you <span class="brand-gradient">trust</span>.</h1>
+  <p class="lead">
+    {{ site_name }} runs real analysis - OCR, image forensics, link inspection,
+    network checks and a claim knowledge base - to score how trustworthy content
+    really is. When evidence is missing, it says so honestly.
+  </p>
+  <div class="d-flex justify-content-center gap-2 flex-wrap">
+    <a href="{{ url_for('scanner_index') }}" class="btn btn-brand btn-lg px-4">
+      <i class="bi bi-search me-1"></i>Start a scan
+    </a>
+    <a href="{{ url_for('features') }}" class="btn btn-outline-brand btn-lg px-4">How it works</a>
+  </div>
+</section>
+
+{% if stats %}
+<section class="row g-3 my-3">
+  {% set cards = [
+    ('bi-search', stats.total_scans, 'Scans completed'),
+    ('bi-people', stats.total_users, 'Registered users'),
+    ('bi-file-earmark-pdf', stats.total_reports, 'PDF reports')
+  ] %}
+  {% for icon, value, label in cards %}
+    <div class="col-6 col-lg-2">
+      <div class="glass-card p-3 text-center h-100">
+        <i class="bi {{ icon }} text-primary fs-3"></i>
+        <div class="stat-value">{{ value }}</div>
+        <div class="small-label">{{ label }}</div>
+      </div>
+    </div>
+  {% endfor %}
+  {% if stats.avg_score is not none %}
+    <div class="col-6 col-lg-2">
+      <div class="glass-card p-3 text-center h-100">
+        <i class="bi bi-gauge text-success fs-3"></i>
+        <div class="stat-value">{{ '%.0f' % stats.avg_score }}</div>
+        <div class="small-label">Avg trust score</div>
+      </div>
+    </div>
+  {% endif %}
+</section>
+{% endif %}
+
+<section class="my-5">
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <h2 class="fw-bold mb-0">Pick a scanner</h2>
+    <a href="{{ url_for('scanner_index') }}" class="btn btn-sm btn-outline-brand">All scanners</a>
+  </div>
+  {% include '_scanner_cards.html' %}
+</section>
+
+<section class="my-5">
+  <div class="row g-4 align-items-center">
+    <div class="col-lg-5">
+      <h2 class="fw-bold">Honest scoring. <span class="brand-gradient">Every time.</span></h2>
+      <p class="text-muted-2">
+        Many "trust checkers" return a green score for everything. {{ site_name }}
+        deducts points only from evidence it actually detects, and returns
+        <span class="badge text-bg-secondary">Insufficient Evidence</span> when
+        there is not enough to judge - short inputs, failed OCR, offline sites,
+        unmatched claims.
+      </p>
+      <ul class="list-unstyled">
+        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>OCR with confidence scoring</li>
+        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Tampering detection via error-level analysis</li>
+        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Domain age &amp; redirect chain inspection</li>
+        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Cross-check against trusted news feeds</li>
+        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Claim verification against a seeded evidence base</li>
+      </ul>
+    </div>
+    <div class="col-lg-7">
+      <div class="glass-card p-4">
+        <div class="small-label mb-3">How a score is built</div>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="p-3 rounded-3" style="background:var(--glass-bg)">
+              <div class="fw-semibold mb-1"><i class="bi bi-1-circle text-brand me-2"></i>Extract evidence</div>
+              <div class="small text-muted-2">OCR, pixel metrics, URLs, WHOIS, RSS feeds, ingredient tokens.</div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="p-3 rounded-3" style="background:var(--glass-bg)">
+              <div class="fw-semibold mb-1"><i class="bi bi-2-circle text-brand me-2"></i>Score each signal</div>
+              <div class="small text-muted-2">Points are deducted only when a real risk signal is found.</div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="p-3 rounded-3" style="background:var(--glass-bg)">
+              <div class="fw-semibold mb-1"><i class="bi bi-3-circle text-brand me-2"></i>Show the evidence</div>
+              <div class="small text-muted-2">Every reason, with impact, is listed on the result page.</div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="p-3 rounded-3" style="background:var(--glass-bg)">
+              <div class="fw-semibold mb-1"><i class="bi bi-4-circle text-brand me-2"></i>Say when unsure</div>
+              <div class="small text-muted-2">Below the confidence threshold the verdict is "Insufficient Evidence".</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="glass-card p-4 my-5 text-center">
+  <h3 class="fw-bold">Found something suspicious?</h3>
+  <p class="text-muted-2 mb-3">Help the community - report a scam pattern so others can check it.</p>
+  <a href="{{ url_for('report_scam') }}" class="btn btn-outline-danger btn-lg">
+    <i class="bi bi-flag me-1"></i>Report a scam
+  </a>
+</section>
+
+{% endblock %}

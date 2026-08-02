@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard · {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+  <div>
+    <h1 class="fw-bold mb-0">Hello, {{ current_user.name.split()[0] }} 👋</h1>
+    <p class="text-muted-2 mb-0">Here is your verification activity.</p>
+  </div>
+  <a href="{{ url_for('scanner_index') }}" class="btn btn-brand"><i class="bi bi-plus-lg me-1"></i>New scan</a>
+</div>
+
+<div class="row g-3 mb-4">
+  {% set cards = [
+    ('bi-search', stats.total_scans, 'Platform scans'),
+    ('bi-folder-check', recent|length, 'Recent scans'),
+    ('bi-bell', unread, 'Unread notifications'),
+    ('bi-file-earmark-pdf', stats.total_reports, 'Your reports')
+  ] %}
+  {% for icon, value, label in cards %}
+    <div class="col-6 col-lg-3">
+      <div class="glass-card p-3 d-flex align-items-center gap-3">
+        <div class="icon-circle"><i class="bi {{ icon }}"></i></div>
+        <div>
+          <div class="stat-value">{{ value }}</div>
+          <div class="small-label">{{ label }}</div>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-lg-5">
+    <div class="glass-card p-4 h-100">
+      <h5 class="fw-semibold mb-3"><i class="bi bi-pie-chart me-2 text-brand"></i>Risk distribution</h5>
+      <div style="max-width: 260px; margin: 0 auto;"><canvas id="riskChart" height="220"></canvas></div>
+      <div class="small text-muted-2 text-center mt-2">All your scans by risk level</div>
+    </div>
+  </div>
+  <div class="col-lg-7">
+    <div class="glass-card p-4 h-100">
+      <h5 class="fw-semibold mb-3"><i class="bi bi-graph-up me-2 text-brand"></i>Scan volume (14 days)</h5>
+      <canvas id="dailyChart" height="220"></canvas>
+    </div>
+  </div>
+</div>
+
+<h4 class="fw-semibold mb-3">Recent scans</h4>
+{% from '_macros.html' import score_badge %}
+<div class="glass-card p-0 overflow-hidden">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead>
+        <tr><th>#</th><th>Type</th><th>Input</th><th>Result</th><th>Date</th><th></th></tr>
+      </thead>
+      <tbody>
+        {% for s in recent %}
+          <tr>
+            <td class="text-muted-2">#{{ s.id }}</td>
+            <td><span class="badge text-bg-light border">{{ s.scan_type }}</span></td>
+            <td class="small">{{ s.input_summary[:60] or '-' }}</td>
+            <td>{{ score_badge(s.trust_score) }}</td>
+            <td class="small text-muted-2">{{ s.created_at.strftime('%d %b %H:%M') }}</td>
+            <td><a href="{{ url_for('view_result', scan_id=s.id) }}" class="btn btn-sm btn-outline-brand">View</a></td>
+          </tr>
+        {% else %}
+          <tr><td colspan="6" class="text-center py-4 text-muted-2">No scans yet - <a href="{{ url_for('scanner_index') }}">run your first scan</a>.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  trustlensCharts({
+    riskChart: {
+      type: 'doughnut',
+      data: {
+        labels: ['Low', 'Medium', 'High', 'Unknown'],
+        datasets: [{
+          data: [{{ charts.risk_dist.low }}, {{ charts.risk_dist.medium }}, {{ charts.risk_dist.high }}, {{ charts.risk_dist.unknown }}],
+          backgroundColor: ['#198754', '#ffc107', '#dc3545', '#6c757d'],
+          borderWidth: 0
+        }]
+      },
+      options: { plugins: { legend: { position: 'bottom' } } }
+    },
+    dailyChart: {
+      type: 'line',
+      data: {
+        labels: {{ charts.chart_labels | tojson }},
+        datasets: [{
+          label: 'Scans',
+          data: {{ charts.chart_daily | tojson }},
+          borderColor: '#a855f7',
+          backgroundColor: 'rgba(168,85,247,0.15)',
+          fill: true,
+          tension: 0.35
+        }]
+      },
+      options: { plugins: { legend: { display: false } } }
+    }
+  });
+</script>
+{% endblock %}

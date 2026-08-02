@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}Profile · {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <h1 class="fw-bold mb-4">Your profile</h1>
+
+    <div class="glass-card p-4 mb-4">
+      <h5 class="fw-semibold mb-3"><i class="bi bi-person me-2 text-brand"></i>Account details</h5>
+      <div class="row g-2 mb-3 small text-muted-2">
+        <div class="col-sm-6"><strong>Email:</strong> {{ user.email }}</div>
+        <div class="col-sm-6"><strong>Role:</strong> {{ user.role }}</div>
+        <div class="col-sm-6"><strong>Joined:</strong> {{ user.created_at.strftime('%d %b %Y') }}</div>
+        <div class="col-sm-6"><strong>Last login:</strong> {{ user.last_login.strftime('%d %b %Y, %H:%M') if user.last_login else '—' }}</div>
+      </div>
+      <form method="post" action="{{ url_for('profile') }}">
+        <input type="hidden" name="action" value="update_profile">
+        <div class="row g-2 align-items-end">
+          <div class="col-md-8">
+            <label class="form-label small-label">Display name</label>
+            <input type="text" class="form-control" name="name" value="{{ user.name }}" required>
+          </div>
+          <div class="col-md-4">
+            <button type="submit" class="btn btn-brand w-100"><i class="bi bi-check2 me-1"></i>Update name</button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="glass-card p-4">
+      <h5 class="fw-semibold mb-3"><i class="bi bi-key me-2 text-brand"></i>Change password</h5>
+      <form method="post" action="{{ url_for('profile') }}">
+        <input type="hidden" name="action" value="change_password">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label small-label">Current password</label>
+            <input type="password" class="form-control" name="current_password" required>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label small-label">New password</label>
+            <input type="password" class="form-control" name="new_password" required minlength="8">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label small-label">Confirm new password</label>
+            <input type="password" class="form-control" name="confirm_password" required>
+          </div>
+          <div class="col-12">
+            <button type="submit" class="btn btn-outline-brand px-4"><i class="bi bi-shield-lock me-1"></i>Update password</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

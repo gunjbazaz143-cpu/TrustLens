@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}About · {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-9">
+    <h1 class="fw-bold mb-2">About {{ site_name }}</h1>
+    <p class="text-muted-2">
+      {{ site_name }} is an AI-based information verification system built to fight
+      phishing, payment scams, fake news, fraudulent job offers and misleading
+      product labels.
+    </p>
+
+    <div class="glass-card p-4 my-4">
+      <h4 class="fw-semibold"><i class="bi bi-compass text-brand me-2"></i>Our mission</h4>
+      <p class="mb-0">
+        Scammers rely on urgency, fake scores and unverifiable claims. We built a
+        tool that does the opposite: it gathers real evidence from the content you
+        give it and shows you exactly why something looks trustworthy - or why it
+        does not. If it cannot decide, it tells you it cannot decide.
+      </p>
+    </div>
+
+    <div class="glass-card p-4 my-4">
+      <h4 class="fw-semibold"><i class="bi bi-eyeglasses text-brand me-2"></i>What we analyse</h4>
+      <ul class="mb-0">
+        <li><strong>Text and email</strong> - urgency language, malicious links, payment-to-reward patterns, scam-corpus similarity, grammar.</li>
+        <li><strong>Images and screenshots</strong> - OCR with confidence, blur, compression, editing metadata, tampering (ELA), duplicate detection, embedded QR codes.</li>
+        <li><strong>Websites</strong> - URL structure, WHOIS domain age, TLS, redirect chains, page content.</li>
+        <li><strong>News</strong> - clickbait detection and live cross-checking against trusted feeds.</li>
+        <li><strong>Jobs and internships</strong> - fee collection, free-mail recruiters, unrealistic salaries, missing company identifiers.</li>
+        <li><strong>Claims</strong> - matched against a seeded knowledge base of verified facts.</li>
+        <li><strong>Product ingredients</strong> - OCR label reading screened against a risk database.</li>
+        <li><strong>QR codes</strong> - payload decoded and scored with the full text engine.</li>
+      </ul>
+    </div>
+
+    <div class="glass-card p-4 my-4">
+      <h4 class="fw-semibold"><i class="bi bi-shield-lock text-brand me-2"></i>Honesty by design</h4>
+      <p class="mb-0">
+        We never fabricate a score. Every result page shows the evidence that
+        produced the score, each with its point impact. When a scan lacks enough
+        information - a two-word message, an unreachable site, an unreadable label -
+        the verdict is <span class="badge text-bg-secondary">Insufficient Evidence</span>,
+        not a guess.
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

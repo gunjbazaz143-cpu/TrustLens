@@ -1,0 +1,25 @@
+# TrustLens - core web framework
+Flask>=3.0
+Flask-SQLAlchemy>=3.1
+Flask-Login>=0.6
+Flask-Mail>=0.9
+Flask-WTF>=1.2
+
+# Analysis engines
+opencv-python>=4.9
+Pillow>=10.0
+numpy>=1.26
+scikit-learn>=1.3
+easyocr>=1.7
+pypdf>=4.0
+requests>=2.31
+beautifulsoup4>=4.12
+python-whois>=0.8
+
+# PDF report generation
+reportlab>=4.0
+
+# Optional (auto-degrade if missing):
+#   spacy               # advanced NLP; text scanner uses built-in heuristics otherwise
+#   sentence-transformers # semantic similarity; TF-IDF is used otherwise
+#   torch               # already a dependency of easyocr on CPU

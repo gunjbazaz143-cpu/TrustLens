@@ -1,0 +1,224 @@
+/* =====================================================================
+   TrustLens - global styles (glassmorphism, dark/light)
+   ===================================================================== */
+
+:root {
+  --brand-1: #6366f1;
+  --brand-2: #a855f7;
+  --brand-3: #ec4899;
+  --glass-radius: 1.1rem;
+}
+
+/* Dark theme (default) ------------------------------------------------- */
+html[data-bs-theme="dark"] {
+  --glass-bg: rgba(255, 255, 255, 0.055);
+  --glass-border: rgba(255, 255, 255, 0.13);
+  --glass-shadow: 0 10px 34px rgba(0, 0, 0, 0.38);
+  --body-grad: radial-gradient(1200px 600px at 15% -10%, rgba(99, 102, 241, 0.28), transparent 60%),
+               radial-gradient(1000px 500px at 100% 0%, rgba(236, 72, 153, 0.18), transparent 55%),
+               radial-gradient(900px 600px at 50% 110%, rgba(168, 85, 247, 0.15), transparent 60%),
+               #0b1020;
+  --muted: rgba(255, 255, 255, 0.65);
+}
+
+/* Light theme ---------------------------------------------------------- */
+html[data-bs-theme="light"] {
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(15, 23, 42, 0.08);
+  --glass-shadow: 0 10px 34px rgba(31, 38, 135, 0.10);
+  --body-grad: radial-gradient(1200px 600px at 15% -10%, rgba(99, 102, 241, 0.14), transparent 60%),
+               radial-gradient(1000px 500px at 100% 0%, rgba(236, 72, 153, 0.10), transparent 55%),
+               radial-gradient(900px 600px at 50% 110%, rgba(168, 85, 247, 0.10), transparent 60%),
+               #f1f5f9;
+  --muted: rgba(15, 23, 42, 0.65);
+}
+
+body {
+  min-height: 100vh;
+  background: var(--body-grad);
+  background-attachment: fixed;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1 0 auto;
+}
+
+footer {
+  flex-shrink: 0;
+}
+
+/* Glassmorphism -------------------------------------------------------- */
+.glass-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--glass-radius);
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.navbar-glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+/* Brand gradient text -------------------------------------------------- */
+.brand-gradient {
+  background: linear-gradient(120deg, var(--brand-1), var(--brand-2), var(--brand-3));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.btn-brand {
+  background: linear-gradient(120deg, var(--brand-1), var(--brand-2));
+  border: none;
+  color: #fff;
+  font-weight: 600;
+}
+.btn-brand:hover {
+  filter: brightness(1.08);
+  color: #fff;
+}
+
+.btn-outline-brand {
+  border: 1px solid var(--brand-2);
+  color: var(--brand-2);
+  font-weight: 600;
+}
+.btn-outline-brand:hover {
+  background: var(--brand-2);
+  color: #fff;
+}
+
+/* Hero ---------------------------------------------------------------- */
+.hero {
+  padding: 4rem 0 3rem;
+  text-align: center;
+}
+.hero h1 {
+  font-size: clamp(2.1rem, 5vw, 3.4rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.hero .lead {
+  color: var(--muted);
+  max-width: 42rem;
+  margin: 1rem auto;
+}
+
+.gauge {
+  font-size: clamp(2.6rem, 6vw, 4rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+/* Scanner / feature cards ---------------------------------------------- */
+.scanner-card {
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+  height: 100%;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+.scanner-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--glass-shadow), 0 16px 40px rgba(99, 102, 241, 0.22);
+}
+
+.icon-circle {
+  width: 3.2rem;
+  height: 3.2rem;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  background: linear-gradient(135deg, var(--brand-1), var(--brand-3));
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.stat-value {
+  font-size: 1.9rem;
+  font-weight: 800;
+}
+
+/* Evidence list -------------------------------------------------------- */
+.evidence-item {
+  border-left: 4px solid var(--glass-border);
+}
+.evidence-item.sev-danger { border-left-color: #dc3545; }
+.evidence-item.sev-warning { border-left-color: #fd7e14; }
+.evidence-item.sev-success { border-left-color: #198754; }
+.evidence-item.sev-info { border-left-color: var(--brand-1); }
+
+/* Tables ---------------------------------------------------------------- */
+.table-responsive {
+  border-radius: var(--glass-radius);
+}
+thead th {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+/* Misc ----------------------------------------------------------------- */
+.text-muted-2 { color: var(--muted); }
+.text-brand { color: var(--brand-1); }
+.small-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.step-line {
+  border-left: 2px dashed var(--brand-2);
+}
+
+.upload-zone {
+  border: 2px dashed var(--glass-border);
+  border-radius: var(--glass-radius);
+  padding: 2.5rem 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.upload-zone:hover, .upload-zone.dragover {
+  border-color: var(--brand-2);
+  background: rgba(168, 85, 247, 0.08);
+}
+
+/* Dropdown width fix for theme toggle */
+.theme-toggle {
+  border: 1px solid var(--glass-border);
+  border-radius: 2rem;
+  width: 2.4rem;
+  height: 2.4rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Admin sub-nav */
+.admin-tab .nav-link {
+  color: var(--muted);
+  border-radius: 0.6rem;
+  font-weight: 600;
+}
+.admin-tab .nav-link.active {
+  background: linear-gradient(120deg, var(--brand-1), var(--brand-2));
+  color: #fff;
+}
+
+/* Footer ---------------------------------------------------------------- */
+footer a {
+  text-decoration: none;
+}

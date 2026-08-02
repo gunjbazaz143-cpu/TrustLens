@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Text / Email scanner · {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-7">
+    <h1 class="fw-bold">Text / Email scanner</h1>
+    <p class="text-muted-2">Paste a message, email or document and we will score it against known phishing and scam patterns.</p>
+    <form method="post" action="{{ url_for('scanner_text') }}" class="glass-card p-4">
+      <label class="form-label small-label">Content to verify</label>
+      <textarea class="form-control mb-3" name="text" rows="10" required placeholder="Paste the full message here..."></textarea>
+      <button type="submit" class="btn btn-brand px-4"><i class="bi bi-search me-1"></i>Verify content</button>
+    </form>
+  </div>
+  <div class="col-lg-5">
+    <div class="glass-card p-4">
+      <h5 class="fw-semibold">What is checked</h5>
+      <ul class="small text-muted-2 mb-0">
+        <li>High-pressure language and urgency triggers</li>
+        <li>Malicious, unencrypted or shortened links</li>
+        <li>Pay-money-to-receive-reward patterns</li>
+        <li>Free-mail sender domains</li>
+        <li>Similarity to documented scam messages</li>
+        <li>Grammar quality and AI-generation heuristics</li>
+      </ul>
+      <hr>
+      <h5 class="fw-semibold">Tip</h5>
+      <p class="small text-muted-2 mb-0">Longer inputs produce more reliable scores. Under 20 characters returns "Insufficient Evidence" honestly.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

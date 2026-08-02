@@ -1,0 +1,25 @@
+{# Reusable grid of the 8 scanners #}
+{% set scanners = [
+  ('scanner_text', 'bi-chat-left-text', 'Text / Email', 'Detect phishing, urgency traps, payment-to-reward scams and AI-generated wording in messages and documents.'),
+  ('scanner_image', 'bi-image', 'Image / Screenshot', 'OCR the text, measure blur, compression, tampering (ELA), duplicates and decode embedded QR codes.'),
+  ('scanner_website', 'bi-globe2', 'Website', 'Inspect URL patterns, domain age (WHOIS), TLS, redirects and page structure.'),
+  ('scanner_news', 'bi-newspaper', 'News Article', 'Catch clickbait, cross-check headlines against trusted feeds and verify screenshot integrity.'),
+  ('scanner_job', 'bi-briefcase', 'Job / Internship', 'Spot fee-collection fraud, fake recruiters and unrealistic offers in postings or offer letters.'),
+  ('scanner_claim', 'bi-patch-check', 'Claim Checker', 'Match statements against an evidence knowledge base to check if a claim is likely true or false.'),
+  ('scanner_ingredient', 'bi-box-seam', 'Product Ingredients', 'OCR a back label and screen ingredients against a risk database.'),
+  ('scanner_qr', 'bi-qr-code', 'QR Code', 'Decode a QR payload and score the embedded text/URL with the full verification engine.')
+] %}
+
+<div class="row g-4">
+  {% for endpoint, icon, title, desc in scanners %}
+    <div class="col-sm-6 col-lg-3">
+      <a class="scanner-card glass-card p-4" href="{{ url_for(endpoint) }}">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <div class="icon-circle"><i class="bi {{ icon }}"></i></div>
+          <h5 class="mb-0 fw-semibold">{{ title }}</h5>
+        </div>
+        <p class="text-muted-2 small mb-0">{{ desc }}</p>
+      </a>
+    </div>
+  {% endfor %}
+</div>

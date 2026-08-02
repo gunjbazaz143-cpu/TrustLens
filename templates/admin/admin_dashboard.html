@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% block title %}Admin dashboard · {{ site_name }}{% endblock %}
+
+{% block content %}
+{% from '_macros.html' import score_badge %}
+<h1 class="fw-bold mb-4"><i class="bi bi-speedometer2 me-2 text-warning"></i>Admin dashboard</h1>
+{% include 'admin/_admin_nav.html' %}
+
+<div class="row g-3 mb-4">
+  {% set cards = [
+    ('bi-people', totals.users, 'Total users', 'text-primary'),
+    ('bi-person-check', totals.active, 'Active users', 'text-success'),
+    ('bi-search', totals.scans, 'Total scans', 'text-info'),
+    ('bi-calendar-check', totals.today, 'Scans today', 'text-warning'),
+    ('bi-file-earmark-pdf', totals.reports, 'Reports', 'text-danger'),
+    ('bi-envelope-exclamation', totals.unread, 'Unread messages', 'text-danger')
+  ] %}
+  {% for icon, value, label, color in cards %}
+    <div class="col-6 col-lg-2">
+      <div class="glass-card p-3 text-center h-100">
+        <i class="bi {{ icon }} {{ color }} fs-3"></i>
+        <div class="stat-value">{{ value }}</div>
+        <div class="small-label">{{ label }}</div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-lg-5">
+    <div class="glass-card p-4 h-100">
+      <h5 class="fw-semibold mb-3"><i class="bi bi-pie-chart me-2 text-brand"></i>Risk distribution</h5>
+      <canvas id="riskChart" height="200"></canvas>
+    </div>
+  </div>
+  <div class="col-lg-7">
+    <div class="glass-card p-4 h-100">
+      <h5 class="fw-semibold mb-3"><i class="bi bi-graph-up me-2 text-brand"></i>Daily scans (14 days)</h5>
+      <canvas id="dailyChart" height="200"></canvas>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="glass-card p-4">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-semibold mb-0"><i class="bi bi-search me-2 text-brand"></i>Recent scans</h5>
+        <a href="{{ url_for('admin_scans') }}" class="btn btn-sm btn-outline-brand">View all</a>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-sm align-middle mb-0">
+          <thead><tr><th>#</th><th>Type</th><th>Score</th><th>Risk</th><th>User</th></tr></thead>
+          <tbody>
+            {% for s in recent_scans %}
+              <tr>
+                <td class="text-muted-2">#{{ s.id }}</td>
+                <td class="small">{{ s.scan_type }}</td>
+                <td>{{ score_badge(s.trust_score) }}</td>
+                <td>{{ s.risk_level or '-' }}</td>
+                <td class="small">{{ s.user.email if s.user else 'guest' }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="glass-card p-4">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-semibold mb-0"><i class="bi bi-people me-2 text-brand"></i>Newest users</h5>
+        <a href="{{ url_for('admin_users') }}" class="btn btn-sm btn-outline-brand">Manage</a>
+      </div>
+      <ul class="list-group list-group-flush">
+        {% for u in recent_users %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+              <div class="fw-semibold small">{{ u.name }}</div>
+              <div class="small text-muted-2">{{ u.email }}</div>
+            </div>
+            <span class="badge {% if u.role == 'admin' %}text-bg-warning{% elif u.is_active %}text-bg-success{% else %}text-bg-secondary{% endif %}">
+              {{ u.role }}{{ '' if u.is_active else ' · suspended' }}
+            </span>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  trustlensCharts({
+    riskChart: {
+      type: 'doughnut',
+      data: {
+        labels: ['Low', 'Medium', 'High', 'Unknown'],
+        datasets: [{
+          data: [{{ charts.risk_dist.low }}, {{ charts.risk_dist.medium }}, {{ charts.risk_dist.high }}, {{ charts.risk_dist.unknown }}],
+          backgroundColor: ['#198754', '#ffc107', '#dc3545', '#6c757d'],
+          borderWidth: 0
+        }]
+      },
+      options: { plugins: { legend: { position: 'bottom' } } }
+    },
+    dailyChart: {
+      type: 'line',
+      data: {
+        labels: {{ charts.chart_labels | tojson }},
+        datasets: [{
+          label: 'Scans',
+          data: {{ charts.chart_daily | tojson }},
+          borderColor: '#a855f7',
+          backgroundColor: 'rgba(168,85,247,0.15)',
+          fill: true,
+          tension: 0.35
+        }]
+      },
+      options: { plugins: { legend: { display: false } } }
+    }
+  });
+</script>
+{% endblock %}

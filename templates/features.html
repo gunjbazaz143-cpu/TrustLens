@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Features · {{ site_name }}{% endblock %}
+
+{% block content %}
+<h1 class="fw-bold mb-1">Features</h1>
+<p class="text-muted-2 mb-4">Everything {{ site_name }} does to keep you safe.</p>
+
+<div class="row g-4">
+  {% set features = [
+    ('bi-chat-left-text', 'Text & email analysis', 'High-pressure language, dangerous links, pay-to-receive-reward patterns, free-mail senders, scam-corpus similarity and AI-generation heuristics.'),
+    ('bi-image', 'Image forensics', 'OCR with confidence scores, exposure and blur metrics, compression artifacts, editing-software metadata, tampering detection (ELA) and perceptual-hash duplicate matching.'),
+    ('bi-globe2', 'Website inspection', 'Static URL heuristics, WHOIS domain age, homograph/punycode domains, TLS, redirect chains and page title checks.'),
+    ('bi-newspaper', 'News cross-checking', 'Clickbait pattern detection plus live comparison against BBC and Reuters feeds to confirm or question a story.'),
+    ('bi-briefcase', 'Job fraud detection', 'Flags fee requests, free-mail recruiters, unrealistic compensation, missing company identifiers and urgent pressure wording.'),
+    ('bi-patch-check', 'Claim verification', 'Matches statements against a seeded knowledge base with a similarity threshold - no match, no verdict.'),
+    ('bi-box-seam', 'Ingredient screening', 'Reads product labels via OCR and maps ingredients to a safety-risk database.'),
+    ('bi-qr-code', 'QR payload scoring', 'Decodes the code and runs the full text and URL engines on the hidden payload.'),
+    ('bi-file-earmark-pdf', 'PDF reports', 'Generate a professional, printable report of any saved scan.'),
+    ('bi-people', 'Accounts & history', 'Signup, login, password reset, per-user dashboard, filterable history and saved reports.'),
+    ('bi-shield-lock', 'Admin panel', 'User management, scan overview, report management with CSV export, contact messages, audit logs and system settings.'),
+    ('bi-flag', 'Community scam registry', 'Public scam-report page so patterns are shared with everyone.'),
+    ('bi-hourglass-split', 'Rate limiting & RBAC', 'Per-IP rate limits and a role-based admin/user model with full audit logging.'),
+    ('bi-moon-stars', 'Dark / light UI', 'Glassmorphism interface with a persistent theme toggle.')
+  ] %}
+  {% for icon, title, desc in features %}
+    <div class="col-md-6 col-lg-4">
+      <div class="glass-card p-4 h-100">
+        <div class="icon-circle mb-3"><i class="bi {{ icon }}"></i></div>
+        <h5 class="fw-semibold">{{ title }}</h5>
+        <p class="text-muted-2 small mb-0">{{ desc }}</p>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

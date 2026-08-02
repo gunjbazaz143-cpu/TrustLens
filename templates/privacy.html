@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Privacy · {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <h1 class="fw-bold mb-3">Privacy policy</h1>
+    <div class="glass-card p-4">
+      <h5 class="fw-semibold">1. What we collect</h5>
+      <p>When you create an account we store your name, email and a hashed password. Scans store the content summary you submitted, the computed evidence and the result. Uploaded files are stored on our server with random names.</p>
+
+      <h5 class="fw-semibold mt-4">2. How it is used</h5>
+      <p>Account data powers login, history, notifications and reports. Scan data powers your dashboard and is used only to produce and store verification results. We do not sell personal data.</p>
+
+      <h5 class="fw-semibold mt-4">3. Third-party analysis</h5>
+      <p>Scanners may contact external services (WHOIS registries, news RSS feeds, or the target website you ask us to verify) to gather public evidence. Content you ask to be verified is sent to those services solely to perform the analysis.</p>
+
+      <h5 class="fw-semibold mt-4">4. Storage &amp; retention</h5>
+      <p>Data is stored in a local SQLite database. You can delete individual scans and reports at any time; contact us to delete your whole account.</p>
+
+      <h5 class="fw-semibold mt-4">5. Cookies &amp; sessions</h5>
+      <p>We use a session cookie for sign-in and a browser preference for the theme. No advertising or tracking cookies are used.</p>
+
+      <h5 class="fw-semibold mt-4">6. Security</h5>
+      <p>Passwords are hashed, session cookies are HttpOnly, uploads use random filenames, and admin actions are audited.</p>
+
+      <h5 class="fw-semibold mt-4">7. Contact</h5>
+      <p>Questions about this policy? Use the <a href="{{ url_for('contact') }}">contact page</a>.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

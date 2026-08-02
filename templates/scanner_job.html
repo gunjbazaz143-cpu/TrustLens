@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}Job scanner · {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-7">
+    <h1 class="fw-bold">Job / Internship scanner</h1>
+    <p class="text-muted-2">Fake offers are the #1 recruitment scam. Paste the posting, its URL, or upload the offer letter to check it.</p>
+    <form method="post" action="{{ url_for('scanner_job') }}" enctype="multipart/form-data" class="glass-card p-4">
+      <div class="mb-3">
+        <label class="form-label small-label">Job posting URL</label>
+        <input type="text" class="form-control" name="url" placeholder="https://...">
+      </div>
+      <div class="mb-3">
+        <label class="form-label small-label">Posting text</label>
+        <textarea class="form-control" name="text" rows="7" placeholder="Paste the job description or the offer letter text..."></textarea>
+      </div>
+      <div class="mb-3">
+        <label class="form-label small-label">Offer letter / PDF (optional)</label>
+        <div class="upload-zone" data-upload-zone="fileInput" data-preview="imgPreview">
+          <i class="bi bi-file-earmark-text fs-1 d-block mb-2 text-brand"></i>
+          <div class="fw-semibold">Click or drop a PDF or image</div>
+          <div class="small text-muted-2">Text is extracted automatically</div>
+        </div>
+        <input type="file" class="d-none" id="fileInput" name="file" accept=".pdf,image/*">
+        <div id="imgPreview" class="text-center"></div>
+      </div>
+      <button type="submit" class="btn btn-brand px-4"><i class="bi bi-search me-1"></i>Verify job offer</button>
+    </form>
+  </div>
+  <div class="col-lg-5">
+    <div class="glass-card p-4">
+      <h5 class="fw-semibold">Red flags we hunt for</h5>
+      <ul class="small text-muted-2 mb-0">
+        <li>Registration / processing / training fees</li>
+        <li>Recruiters using free-mail domains</li>
+        <li>Unrealistic salaries (lakhs per month etc.)</li>
+        <li>Missing company registration identifiers</li>
+        <li>Urgent pressure to pay or apply fast</li>
+      </ul>
+      <hr>
+      <h5 class="fw-semibold">Golden rule</h5>
+      <p class="small text-muted-2 mb-0">Legitimate employers never charge candidates. If a fee is requested, it is almost certainly a scam.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

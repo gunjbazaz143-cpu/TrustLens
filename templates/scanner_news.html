@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block title %}News scanner · {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-7">
+    <h1 class="fw-bold">News scanner</h1>
+    <p class="text-muted-2">Paste a headline, article text, a URL, or upload a screenshot / PDF of a story. The engine extracts the main claim, searches live trusted outlets, collects and compares evidence, then returns an evidence-backed verdict.</p>
+    <form method="post" action="{{ url_for('scanner_news') }}" enctype="multipart/form-data" class="glass-card p-4">
+      <div class="mb-3">
+        <label class="form-label small-label">Headline</label>
+        <input type="text" class="form-control" name="headline" placeholder="The story's headline...">
+      </div>
+      <div class="mb-3">
+        <label class="form-label small-label">Article URL</label>
+        <input type="text" class="form-control" name="url" placeholder="https://...">
+      </div>
+      <div class="mb-3">
+        <label class="form-label small-label">Article text</label>
+        <textarea class="form-control" name="text" rows="6" placeholder="Paste the article text..."></textarea>
+      </div>
+      <div class="mb-3">
+        <label class="form-label small-label">Screenshot or PDF (optional)</label>
+        <div class="upload-zone" data-upload-zone="fileInput" data-preview="imgPreview">
+          <i class="bi bi-file-earmark-text fs-1 d-block mb-2 text-brand"></i>
+          <div class="fw-semibold">Click or drop a news screenshot or PDF</div>
+          <div class="small text-muted-2">OCR extracts text from images · PDFs are parsed directly</div>
+        </div>
+        <input type="file" class="d-none" id="fileInput" name="file" accept="image/*,.pdf">
+        <div id="imgPreview" class="text-center"></div>
+      </div>
+      <button type="submit" class="btn btn-brand px-4"><i class="bi bi-search me-1"></i>Verify news</button>
+    </form>
+  </div>
+  <div class="col-lg-5">
+    <div class="glass-card p-4 mb-4">
+      <h5 class="fw-semibold"><i class="bi bi-newspaper me-2 text-brand"></i>How it works</h5>
+      <ol class="small text-muted-2 mb-0 ps-3">
+        <li>Claim is extracted from the headline, article, PDF or OCR'd screenshot</li>
+        <li>People, places, organisations and dates are identified</li>
+        <li>Targeted search queries are auto-generated from the claim</li>
+        <li>Live search runs against trusted outlets only (RSS feeds + web search filtered to a trusted-domain allowlist)</li>
+        <li>Matching articles are opened and compared - similarity, entity overlap, date consistency and contradiction</li>
+        <li>Verdict + confidence are computed only from the evidence gathered</li>
+      </ol>
+      <hr>
+      <h5 class="fw-semibold">Trusted sources searched</h5>
+      <div class="small text-muted-2">
+        Reuters · AP · BBC · The Guardian · Al Jazeera · The Hindu · Indian Express · Times of India · NDTV · PIB · WHO · UN News, plus any outlet on the trusted-domain allowlist (government sites, major wire agencies).
+      </div>
+      <hr>
+      <h5 class="fw-semibold">Verdicts</h5>
+      <ul class="small text-muted-2 mb-0">
+        <li>✅ Verified - 2+ trusted sources support the claim</li>
+        <li>⚠️ Partially Verified - some claims confirmed, some missing</li>
+        <li>❌ Contradicted by Reliable Sources - trusted reports say the opposite</li>
+        <li>❓ Insufficient Evidence - nothing found either way</li>
+      </ul>
+      <hr>
+      <h5 class="fw-semibold">Honesty rule</h5>
+      <p class="small text-muted-2 mb-0">We never label a story "True" or "Fake" without evidence, and the AI (when enabled) only explains an already-computed verdict - it never decides it. If live internet search is unavailable, the report says so and returns <strong>Insufficient Evidence</strong> instead of guessing.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

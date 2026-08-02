@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Sign in · {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6 col-lg-5">
+    <div class="glass-card p-4">
+      <div class="text-center mb-4">
+        <div class="icon-circle mx-auto mb-3"><i class="bi bi-person-lock"></i></div>
+        <h2 class="fw-bold">Welcome back</h2>
+        <p class="text-muted-2 small">Sign in to access history and reports.</p>
+      </div>
+      <form method="post" action="{{ url_for('login') }}">
+        <div class="mb-3">
+          <label class="form-label small-label">Email address</label>
+          <input type="email" class="form-control" name="email" required autofocus placeholder="you@example.com">
+        </div>
+        <div class="mb-3">
+          <label class="form-label small-label">Password</label>
+          <div class="input-group">
+            <input type="password" class="form-control" name="password" id="pw" required placeholder="Your password">
+            <button type="button" class="btn btn-outline-secondary" data-toggle-password="pw"><i class="bi bi-eye"></i></button>
+          </div>
+        </div>
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="checkbox" name="remember" id="remember">
+          <label class="form-check-label" for="remember">Keep me signed in</label>
+        </div>
+        <button type="submit" class="btn btn-brand w-100"><i class="bi bi-box-arrow-in-right me-1"></i>Sign in</button>
+      </form>
+      <div class="text-center mt-3 small">
+        <a href="{{ url_for('forgot_password') }}" class="link-secondary">Forgot password?</a>
+        <span class="text-muted-2 mx-1">·</span>
+        <span class="text-muted-2">No account?</span>
+        <a href="{{ url_for('register') }}" class="link-primary">Create one</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

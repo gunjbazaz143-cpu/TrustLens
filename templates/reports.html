@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}My reports · {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+  <h1 class="fw-bold mb-0">My reports</h1>
+  <a href="{{ url_for('scanner_index') }}" class="btn btn-brand btn-sm"><i class="bi bi-plus-lg me-1"></i>New scan</a>
+</div>
+
+<div class="glass-card p-0 overflow-hidden">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead>
+        <tr><th>#</th><th>Report</th><th>Scan</th><th>Created</th><th class="text-end">Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for r in reports %}
+          <tr>
+            <td class="text-muted-2">#{{ r.id }}</td>
+            <td>
+              <i class="bi bi-file-earmark-pdf text-danger me-1"></i>{{ r.filename }}
+            </td>
+            <td class="small">{{ r.scan_type if r.scan else '-' }}</td>
+            <td class="small text-muted-2">{{ r.created_at.strftime('%d %b %Y, %H:%M') }}</td>
+            <td class="text-end">
+              <a href="{{ url_for('download_report', report_id=r.id) }}" class="btn btn-sm btn-brand"><i class="bi bi-download me-1"></i>Download</a>
+              <form method="post" action="{{ url_for('delete_report', report_id=r.id) }}" class="d-inline"
+                    onsubmit="return confirm('Delete this report file?')">
+                <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+              </form>
+            </td>
+          </tr>
+        {% else %}
+          <tr><td colspan="5" class="text-center py-4 text-muted-2">No reports yet. Open a scan result and click "Download PDF report".</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

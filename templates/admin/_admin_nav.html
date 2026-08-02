@@ -1,0 +1,11 @@
+<div class="glass-card p-2 mb-4">
+  <ul class="nav admin-tab nav-pills flex-wrap gap-1">
+    <li class="nav-item"><a class="nav-link {% if active == 'dashboard' %}active{% endif %}" href="{{ url_for('admin_dashboard') }}"><i class="bi bi-speedometer2 me-1"></i>Dashboard</a></li>
+    <li class="nav-item"><a class="nav-link {% if active == 'users' %}active{% endif %}" href="{{ url_for('admin_users') }}"><i class="bi bi-people me-1"></i>Users</a></li>
+    <li class="nav-item"><a class="nav-link {% if active == 'scans' %}active{% endif %}" href="{{ url_for('admin_scans') }}"><i class="bi bi-search me-1"></i>Scans</a></li>
+    <li class="nav-item"><a class="nav-link {% if active == 'reports' %}active{% endif %}" href="{{ url_for('admin_reports') }}"><i class="bi bi-file-earmark-pdf me-1"></i>Reports</a></li>
+    <li class="nav-item"><a class="nav-link {% if active == 'messages' %}active{% endif %}" href="{{ url_for('admin_messages') }}"><i class="bi bi-envelope me-1"></i>Messages</a></li>
+    <li class="nav-item"><a class="nav-link {% if active == 'logs' %}active{% endif %}" href="{{ url_for('admin_logs') }}"><i class="bi bi-journal-text me-1"></i>Logs</a></li>
+    <li class="nav-item"><a class="nav-link {% if active == 'settings' %}active{% endif %}" href="{{ url_for('admin_settings') }}"><i class="bi bi-gear me-1"></i>Settings</a></li>
+  </ul>
+</div>

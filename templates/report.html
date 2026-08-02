@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block title %}Report a Scam · {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-5">
+    <h1 class="fw-bold mb-1">Report a scam</h1>
+    <p class="text-muted-2 mb-4">
+      Share a scam pattern you encountered so the community can recognise it.
+      Your submission appears in the public registry below (names are shown only
+      if you provide them).
+    </p>
+    <form method="post" action="{{ url_for('report_scam') }}" class="glass-card p-4">
+      <div class="mb-3">
+        <label class="form-label small-label">Scam type</label>
+        <select class="form-select" name="scam_type">
+          <option>Phishing / Email</option>
+          <option>UPI / Payment fraud</option>
+          <option>Fake job / internship</option>
+          <option>Fake news / misinformation</option>
+          <option>Lottery / prize scam</option>
+          <option>Fake product / label</option>
+          <option>QR code scam</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label class="form-label small-label">Your name (optional)</label>
+        <input type="text" class="form-control" name="name" placeholder="Anonymous">
+      </div>
+      <div class="mb-3">
+        <label class="form-label small-label">Email (optional)</label>
+        <input type="email" class="form-control" name="email">
+      </div>
+      <div class="mb-3">
+        <label class="form-label small-label">Subject / headline</label>
+        <input type="text" class="form-control" name="subject">
+      </div>
+      <div class="mb-3">
+        <label class="form-label small-label">Scam URL (optional)</label>
+        <input type="text" class="form-control" name="url" placeholder="https://...">
+      </div>
+      <div class="mb-3">
+        <label class="form-label small-label">Details</label>
+        <textarea class="form-control" name="details" rows="4" placeholder="Describe what happened..."></textarea>
+      </div>
+      <button type="submit" class="btn btn-outline-danger px-4"><i class="bi bi-flag me-1"></i>Submit report</button>
+    </form>
+  </div>
+
+  <div class="col-lg-7">
+    <h4 class="fw-semibold mb-3">Recent community reports</h4>
+    {% if reports %}
+      {% for r in reports %}
+        <div class="glass-card p-3 mb-3">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <span class="badge text-bg-secondary mb-1">{{ r.scam_type }}</span>
+              <div class="fw-semibold">{{ r.subject or 'Untitled report' }}</div>
+            </div>
+            <small class="text-muted-2">{{ r.submitted_at.strftime('%d %b %Y') }}</small>
+          </div>
+          {% if r.details %}<p class="small text-muted-2 mb-1 mt-2">{{ r.details[:280] }}</p>{% endif %}
+          {% if r.url %}<code class="small">{{ r.url[:120] }}</code>{% endif %}
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="glass-card p-4 text-center text-muted-2">
+        <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+        No reports yet - be the first to share a pattern.
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
