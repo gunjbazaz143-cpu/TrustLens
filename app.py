@@ -7,7 +7,7 @@ Run locally:
 or with a custom port (the default 5000 may be taken by another service):
     TRUSTLENS_PORT=5001 python app.py
 """
-
+import os
 from datetime import datetime, timezone
 
 from flask import Flask, redirect, render_template, url_for
@@ -332,6 +332,8 @@ def seed_data():
 
 def create_app(config_class=Config):
     app = Flask(__name__)
+    if not os.path.exists(app.instance_path):
+    os.makedirs(app.instance_path)
     app.config.from_object(config_class)
 
     db.init_app(app)
